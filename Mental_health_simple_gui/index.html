@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="./static/favicon.ico" type="image/x-icon" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mental Health Chatbot</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f0f2f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .chat-container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      height: 80vh;
+      position: relative;
+    }
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      padding-right: 10px;
+    }
+    .message {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 15px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+    .user {
+      background-color: #e0f7fa;
+      align-self: flex-end;
+    }
+    .bot {
+      background-color: #c8e6c9;
+      align-self: flex-start;
+    }
+    .input-group input {
+      border-radius: 20px;
+    }
+    .btn-send {
+      border-radius: 20px;
+      margin-left: 10px;
+    }
+    .exit-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 9999;
+      border: none;
+      background: transparent;
+      font-size: 24px;
+      color: #888;
+      cursor: pointer;
+    }
+    .exit-btn:hover {
+      color: #000;
+    }
+    footer {
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <button class="exit-btn" onclick="exitChat()" title="Exit">&times;</button>
+    <h3 class="text-center mb-3">Mental Health Chatbot</h3>
+    <h5 id="hiddenLabel1" class="text-center"></h5> <!-- Mr.KK -->
+    <div class="chat-box" id="chatBox"></div>
+    <div class="input-group">
+      <input type="text" class="form-control" id="question" placeholder="Ask something...">
+      <button class="btn btn-primary btn-send" onclick="askBot()">Send</button>
+    </div>
+  </div>
+
+  <footer>
+    <span id="hiddenLabel2"></span> <!-- By Kanishk -->
+  </footer>
+
+  <script>
+    const chatBox = document.getElementById("chatBox");
+
+    function addMessage(content, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.innerText = content;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function askBot() {
+      const questionInput = document.getElementById("question");
+      const question = questionInput.value.trim();
+
+      if (!question) {
+        alert("Please enter your question");
+        return;
+      }
+
+      addMessage(question, "user");
+      questionInput.value = "";
+      addMessage("Thinking...", "bot");
+
+      const res = await fetch("/get_answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: question }),
+      });
+
+      const data = await res.json();
+      const botMessages = document.querySelectorAll(".message.bot");
+      const lastBot = botMessages[botMessages.length - 1];
+      lastBot.innerText = `Bot: ${data.answer}`;
+    }
+
+    function exitChat() {
+      if (confirm("Are you sure you want to exit the chat?")) {
+        window.close();
+      }
+    }
+    (function(){
+      const code = [77, 114, 46, 75, 75];
+      let name = '';
+      for (let i = 0; i < code.length; i++) {
+        name += String.fromCharCode(code[i]);
+      }
+      document.getElementById('hiddenLabel1').innerText = name;
+    })();
+    (function(){
+      const code = [66, 121, 32, 75, 97, 110, 105, 115, 104, 107];
+      let name = '';
+      for (let i = 0; i < code.length; i++) {
+        name += String.fromCharCode(code[i]);
+      }
+      document.getElementById('hiddenLabel2').innerText = name;
+    })();
+  </script>
+</body>
+</html>
