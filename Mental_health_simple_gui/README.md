@@ -11,11 +11,17 @@ This project is a hybrid mental health chatbot using:
 
 mental-health-chatbot-full/
 ├── app.py
+
 ├── chatbot_llama.py
+
 ├── faiss_index.index
+
 ├── answers.pkl
+
 ├── generate_faiss.py
+
 ├── mentalhealth.csv
+
 ├── index.html
 
 ## How It Works
