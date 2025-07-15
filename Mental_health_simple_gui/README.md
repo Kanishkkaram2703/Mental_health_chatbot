@@ -10,6 +10,7 @@ This project is a hybrid mental health chatbot using:
 ## Project Structure
 
 mental-health-chatbot-full/
+
 ├── app.py
 
 ├── chatbot_llama.py
