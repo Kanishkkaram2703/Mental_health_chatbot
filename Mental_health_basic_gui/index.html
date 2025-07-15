@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mental Health Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
+      padding: 40px;
+      text-align: center;
+    }
+    .chat-box {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #00796b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .response {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #00695c;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-box">
+    <h1>Mental Health Chatbot</h1>
+    <input type="text" id="question" placeholder="How do I deal with stress?" />
+    <br />
+    <button onclick="askBot()">Send</button>
+    <div class="response" id="responseBox"></div>
+  </div>
+
+  <script>
+    async function askBot() {
+      const question = document.getElementById("question").value;
+      const responseBox = document.getElementById("responseBox");
+
+      if (!question) {
+        alert("Please enter your question!");
+        return;
+      }
+
+      responseBox.innerText = "Thinking...";
+
+      const res = await fetch("/get_answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: question }),
+      });
+
+      const data = await res.json();
+      responseBox.innerText = `Bot: ${data.answer}`;
+    }
+  </script>
+</body>
+</html>
