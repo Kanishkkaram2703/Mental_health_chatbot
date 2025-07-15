@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="./static/favicon.ico" type="image/x-icon" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mental Health Chatbot</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f0f2f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .chat-container {
+      max-width: 1200px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+    .message {
+      margin: 8px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      max-width: 60%;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .user {
+      background-color: #dcf8c6;
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    .bot {
+      background-color: #f1f0f0;
+      align-self: flex-start;
+      flex-direction: row;
+    }
+    .message img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      align-self: flex-start;
+    }
+    .input-group input {
+      border-radius: 20px;
+    }
+    .btn-send, .btn-schedule {
+      border-radius: 20px;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <h3 class="text-center mb-2">Mental Health Chatbot</h3>
+    <h5 id="hiddenLabel1" class="text-center"></h5>
+    <div class="chat-box" id="chatBox"></div>
+    <div class="input-group">
+      <input type="text" class="form-control" id="question" placeholder="Ask something...">
+      <button class="btn btn-primary btn-send" onclick="askBot()">Send</button>
+      <button class="btn btn-outline-secondary btn-schedule" onclick="scheduleCall()">Schedule Call</button>
+    </div>
+  </div>
+  <footer style="text-align: center; margin-top: 10px;">
+    <span id="hiddenLabel2"></span>
+  </footer>
+  <script>
+    const chatBox = document.getElementById("chatBox");
+    const questionInput = document.getElementById("question");
+
+    function addMessage(content, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      const img = document.createElement("img");
+      img.src = sender === "user" ? "https://cdn-icons-png.flaticon.com/512/847/847969.png" : "https://cdn-icons-png.flaticon.com/512/4712/4712037.png";
+      const textNode = document.createElement("span");
+      textNode.innerText = content;
+      msg.appendChild(img);
+      msg.appendChild(textNode);
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return msg;
+    }
+
+    async function askBot() {
+      const question = questionInput.value.trim();
+      if (!question) return;
+      addMessage(question, "user");
+      questionInput.value = "";
+      const botMsg = addMessage("Thinking...", "bot");
+      const res = await fetch("/get_answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: question }),
+      });
+      const data = await res.json();
+      let cleanAnswer = (data.answer || "").replace(/Of course, I understand your concern! Here's how to respond directly in a gentle, calming, friendly |Of course, I understand your concern! Here's how to respond directly in a gentle, calming, friendly way:Responding: (as if you were texting a close friend)Dear [friend]|null|nullBot:|Dear [Name]|nullAbsolutely|nullRespond|\[Your name\]/gi, "").trim();
+      botMsg.querySelector("span").innerText = cleanAnswer || "Sorry, no answer available.";
+    }
+
+    questionInput.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        askBot();
+      }
+    });
+
+    function scheduleCall() {
+      const date = prompt("Please enter your preferred date (YYYY-MM-DD):");
+      const time = prompt("Please enter your preferred time (HH:MM):");
+      if (date && time) {
+        alert(`Call scheduled on ${date} at ${time}`);
+      } else {
+        alert("Schedule cancelled.");
+      }
+    }
+
+    (function(){
+      const code = [66, 121, 32, 75, 97, 110, 105, 115, 104, 107];
+      let name = '';
+      for (let i = 0; i < code.length; i++) {
+        name += String.fromCharCode(code[i]);
+      }
+      document.getElementById('hiddenLabel2').innerText = name;
+    })();
+  </script>
+</body>
+</html>
