@@ -124,5 +124,3 @@ Made with ❤️ and care by [Kanishk Karam](https://github.com/Kanishkkaram2703
 ## 📄 License
 
 MIT License — free to use, modify, and share for education or wellness projects.
-
-```
